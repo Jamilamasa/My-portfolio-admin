@@ -1,0 +1,168 @@
+import type { PortfolioContent } from "./types";
+
+export const defaultContent: PortfolioContent = {
+  navItems: [
+    { name: "About", link: "#about" },
+    { name: "Projects", link: "#projects" },
+    { name: "Testimonials", link: "#testimonials" },
+    { name: "Contact", link: "#contact" },
+  ],
+  heroContent: {
+    eyebrow: "Jamil Amasa's Portfolio",
+    headline: "Building full-stack products across fintech, payments, mobile, and AI",
+    intro:
+      "Hi, I'm Jamil, a Full-Stack Software Engineer working across APIs, distributed systems, React, React Native, and LLM-powered products.",
+    cta: "Show my work",
+  },
+  gridItems: [
+    {
+      id: 1,
+      title: "Full-Stack Software Engineer building fintech, payments, mobile, and AI products",
+      description: "I am a",
+      className: "lg:col-span-3 md:col-span-6 md:row-span-4 lg:min-h-[60vh]",
+      imgClassName: "w-full h-full",
+      titleClassName: "justify-end",
+      img: "/b1.svg",
+      spareImg: "",
+    },
+    {
+      id: 2,
+      title: "I design reliable APIs, polished interfaces, mobile workflows, and production services with clear ownership",
+      description: "",
+      className: "lg:col-span-2 md:col-span-3 md:row-span-2",
+      imgClassName: "",
+      titleClassName: "justify-start",
+      img: "",
+      spareImg: "",
+    },
+    {
+      id: 3,
+      title: "My tech stack",
+      description: "I constantly try to improve",
+      className: "lg:col-span-2 md:col-span-3 md:row-span-2",
+      imgClassName: "",
+      titleClassName: "justify-center",
+      img: "",
+      spareImg: "",
+    },
+    {
+      id: 4,
+      title: "Strong background in Python, Go, TypeScript, React, Next.js, React Native, REST APIs, Redis, and SQL databases.",
+      description: "",
+      className: "lg:col-span-2 md:col-span-3 md:row-span-1",
+      imgClassName: "",
+      titleClassName: "justify-start",
+      img: "/grid.svg",
+      spareImg: "/b4.svg",
+    },
+    {
+      id: 5,
+      title: "Currently building ChowCart with a Go backend and three Expo React Native apps, while exploring local LLM workflows with Ollama.",
+      description: "The Inside Scoop",
+      className: "md:col-span-3 md:row-span-2",
+      imgClassName: "absolute right-0 bottom-0 md:w-96 w-60",
+      titleClassName: "justify-center md:justify-start lg:justify-center",
+      img: "/b5.svg",
+      spareImg: "/grid.svg",
+    },
+    {
+      id: 6,
+      title: "Download my resume for a deeper look at my full-stack, backend, mobile, and product engineering work.",
+      description: "",
+      className: "lg:col-span-2 md:col-span-3 md:row-span-1",
+      imgClassName: "",
+      titleClassName: "justify-center md:max-w-full max-w-60 text-center",
+      img: "",
+      spareImg: "",
+    },
+  ],
+  projects: [
+    {
+      id: 1,
+      title: "ChowCart - Campus Food Delivery Platform",
+      des: "Founder and lead engineer for a campus food-delivery platform. Built a Go/Chi backend with PostgreSQL, sqlc, Redis, JWT auth, OAuth, OTP verification, wallet ledger, SSE tracking, WebSocket chat, and three Expo React Native apps.",
+      img: "",
+      iconLists: ["/re.svg", "/tail.svg", "/ts.webp"],
+      link: "https://chowcart.ng",
+    },
+    {
+      id: 2,
+      title: "BuffetBuddy - AI Meal Recommender",
+      des: "AI-powered buffet recommendation system currently being piloted in a 5-star hotel. Combines FastAPI, OpenAI, and Next.js to deliver personalized, health-conscious meal suggestions.",
+      img: "/p5.webp",
+      iconLists: ["/re.svg", "/tail.svg", "/ts.webp"],
+      link: "https://buffet-wellness-guide.vercel.app/",
+    },
+    {
+      id: 3,
+      title: "Passwave - Event Ticketing Application",
+      des: "Led frontend architecture and co-developed a modern ticketing platform enabling secure, real-time ticket sales and validation. Engineered with React, TypeScript, and GraphQL to ensure scalability, performance, and seamless UX for thousands of users.",
+      img: "/p1.webp",
+      iconLists: ["/re.svg", "/tail.svg", "/ts.webp", "/graphql.svg"],
+      link: "https://www.passwave.ng/",
+    },
+    {
+      id: 4,
+      title: "QRGen - Instant QR Code Generator",
+      des: "Designed and built to solve a personal need for quickly sharing links. This tool generates clean, responsive QR codes on the fly. Developed with HTML, TypeScript, and CSS for a fast, intuitive user experience.",
+      img: "/p4.png",
+      iconLists: ["/re.svg", "/tail.svg", "/ts.webp"],
+      link: "https://jamils-qrcode-generator.netlify.app/",
+    },
+  ],
+  testimonials: [
+    {
+      quote:
+        "I had the pleasure of working with Jamil on a ticketing app project. He exhibited outstanding technical skills and professionalism, contributing significantly to the project's success. Highly recommended.",
+      name: "Oluwanifemi Akeju",
+      title: "Fullstack Software Engineer at Passwave",
+    },
+    {
+      quote:
+        "Collaborating with Jamil was an absolute pleasure. His professionalism, promptness, and dedication to delivering exceptional results were evident throughout our project.",
+      name: "Folorunsho Fareed",
+      title: "FrontEnd Developer at Barrel",
+    },
+    {
+      quote:
+        "Working with Jamil has been an absolute pleasure. He exemplifies integrity, honesty, and transparency in every aspect of his work.",
+      name: "Raphael Onunkwor",
+      title: "Senior Frontend Developer at Passwave",
+    },
+  ],
+  workExperience: [
+    {
+      id: 1,
+      title: "Software Engineer - Cray Finance (Ramp Technology)",
+      desc: "Designed, deployed, and monitored production payment services across fraud screening, AI document analysis, transaction analytics, automated reconciliation, virtual-account issuing, APIs, and internal tooling with Python, FastAPI, Go, Redis, SQL, AWS S3, and Datadog.",
+      className: "md:col-span-2",
+      thumbnail: "/exp1.svg",
+    },
+    {
+      id: 2,
+      title: "Software Engineer - IMBIL Telecom Solutions",
+      desc: "Built near real-time operational analytics APIs and React/Next.js dashboards, then migrated reporting from scheduled jobs toward event-driven workflows and queue-based notification delivery.",
+      className: "md:col-span-2",
+      thumbnail: "/exp2.svg",
+    },
+    {
+      id: 3,
+      title: "Software Engineer - FinPadi",
+      desc: "Built and maintained React-based fintech interfaces, refactored frontend architecture, improved application performance by 30%, and delivered reusable accessible component systems.",
+      className: "md:col-span-2",
+      thumbnail: "/exp3.svg",
+    },
+    {
+      id: 4,
+      title: "Founder & Lead Engineer - ChowCart",
+      desc: "Leading product and engineering across a Go backend and student, vendor, and rider Expo apps, covering authentication, order lifecycle, wallet ledger, real-time tracking, chat, notifications, deployment, and customer experience.",
+      className: "md:col-span-2",
+      thumbnail: "/exp4.svg",
+    },
+  ],
+  socialMedia: [
+    { id: 1, img: "/git.svg", link: "https://github.com/jamilamasa" },
+    { id: 2, img: "/twit.webp", link: "https://x.com/Amasa_tech" },
+    { id: 3, img: "/link.svg", link: "https://www.linkedin.com/in/jamil-amasa" },
+  ],
+};
