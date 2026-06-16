@@ -2,14 +2,15 @@
 
 import { defaultContent } from "@/lib/defaultContent";
 import { getPortfolio, login, regenerateApiKey, registerAdmin, requestApiKeyOtp, saveSection, uploadMedia } from "@/lib/api";
-import type { Experience, GridItem, HeroContent, PortfolioContent, Project, SocialLink, Testimonial } from "@/lib/types";
+import type { Experience, GridItem, HeroContent, NavItem, PortfolioContent, Project, SocialLink, Testimonial } from "@/lib/types";
 import { useEffect, useMemo, useState } from "react";
 
-type Section = "hero" | "about" | "projects" | "experience" | "testimonials" | "social";
+type Section = "hero" | "nav" | "about" | "projects" | "experience" | "testimonials" | "social";
 type AuthMode = "login" | "register" | "regenerate-key";
 
 const sections: { id: Section; label: string }[] = [
   { id: "hero", label: "Hero" },
+  { id: "nav", label: "Navigation" },
   { id: "about", label: "About" },
   { id: "projects", label: "Projects" },
   { id: "experience", label: "Experience" },
@@ -149,8 +150,13 @@ export default function AdminPage() {
       const media = await uploadMedia(file, token);
       updateProject(index, { img: media.url });
       setMessage("Photo uploaded. Save projects to publish the new image.");
-    } catch {
-      setMessage("Upload failed. Check file type, login, and media settings.");
+    } catch (error) {
+      const detail = error instanceof Error ? error.message : "Upload failed.";
+      setMessage(
+        detail === "Failed to fetch"
+          ? "Upload API failed or CORS blocked the error response. If Network shows 500, check backend logs and R2 AWS_* configuration."
+          : detail
+      );
     } finally {
       setBusy(false);
     }
@@ -161,11 +167,63 @@ export default function AdminPage() {
     setContent((current) => ({ ...current!, heroContent: { ...current!.heroContent, ...value } }));
   }
 
+  function addNavItem() {
+    if (!content) return;
+    setContent((current) => ({
+      ...current!,
+      navItems: [...current!.navItems, { name: "New link", link: "#" }],
+    }));
+  }
+
+  function updateNavItem(index: number, value: Partial<NavItem>) {
+    if (!content) return;
+    setContent((current) => ({
+      ...current!,
+      navItems: current!.navItems.map((item, itemIndex) => (itemIndex === index ? { ...item, ...value } : item)),
+    }));
+  }
+
+  function removeNavItem(index: number) {
+    if (!content) return;
+    setContent((current) => ({
+      ...current!,
+      navItems: current!.navItems.filter((_, itemIndex) => itemIndex !== index),
+    }));
+  }
+
   function updateGridItem(index: number, value: Partial<GridItem>) {
     if (!content) return;
     setContent((current) => ({
       ...current!,
       gridItems: current!.gridItems.map((item, itemIndex) => (itemIndex === index ? { ...item, ...value } : item)),
+    }));
+  }
+
+  function addGridItem() {
+    if (!content) return;
+    setContent((current) => ({
+      ...current!,
+      gridItems: [
+        ...current!.gridItems,
+        {
+          id: nextId(current!.gridItems),
+          title: "New about card",
+          description: "",
+          className: "lg:col-span-2 md:col-span-3 md:row-span-1",
+          imgClassName: "",
+          titleClassName: "justify-start",
+          img: "",
+          spareImg: "",
+        },
+      ],
+    }));
+  }
+
+  function removeGridItem(index: number) {
+    if (!content) return;
+    setContent((current) => ({
+      ...current!,
+      gridItems: current!.gridItems.filter((_, itemIndex) => itemIndex !== index),
     }));
   }
 
@@ -177,11 +235,62 @@ export default function AdminPage() {
     }));
   }
 
+  function addProject() {
+    if (!content) return;
+    setContent((current) => ({
+      ...current!,
+      projects: [
+        ...current!.projects,
+        {
+          id: nextId(current!.projects),
+          title: "New Project",
+          des: "Project description",
+          img: "",
+          iconLists: [],
+          link: "",
+        },
+      ],
+    }));
+  }
+
+  function removeProject(index: number) {
+    if (!content) return;
+    setContent((current) => ({
+      ...current!,
+      projects: current!.projects.filter((_, itemIndex) => itemIndex !== index),
+    }));
+  }
+
   function updateExperience(index: number, value: Partial<Experience>) {
     if (!content) return;
     setContent((current) => ({
       ...current!,
       workExperience: current!.workExperience.map((item, itemIndex) => (itemIndex === index ? { ...item, ...value } : item)),
+    }));
+  }
+
+  function addExperience() {
+    if (!content) return;
+    setContent((current) => ({
+      ...current!,
+      workExperience: [
+        ...current!.workExperience,
+        {
+          id: nextId(current!.workExperience),
+          title: "New Experience",
+          desc: "Experience description",
+          className: "md:col-span-2",
+          thumbnail: "/exp1.svg",
+        },
+      ],
+    }));
+  }
+
+  function removeExperience(index: number) {
+    if (!content) return;
+    setContent((current) => ({
+      ...current!,
+      workExperience: current!.workExperience.filter((_, itemIndex) => itemIndex !== index),
     }));
   }
 
@@ -193,12 +302,57 @@ export default function AdminPage() {
     }));
   }
 
+  function addTestimonial() {
+    if (!content) return;
+    setContent((current) => ({
+      ...current!,
+      testimonials: [...current!.testimonials, { quote: "New testimonial", name: "Name", title: "Title" }],
+    }));
+  }
+
+  function removeTestimonial(index: number) {
+    if (!content) return;
+    setContent((current) => ({
+      ...current!,
+      testimonials: current!.testimonials.filter((_, itemIndex) => itemIndex !== index),
+    }));
+  }
+
   function updateSocial(index: number, value: Partial<SocialLink>) {
     if (!content) return;
     setContent((current) => ({
       ...current!,
       socialMedia: current!.socialMedia.map((item, itemIndex) => (itemIndex === index ? { ...item, ...value } : item)),
     }));
+  }
+
+  function addSocial() {
+    if (!content) return;
+    setContent((current) => ({
+      ...current!,
+      socialMedia: [...current!.socialMedia, { id: nextId(current!.socialMedia), img: "", link: "" }],
+    }));
+  }
+
+  function removeSocial(index: number) {
+    if (!content) return;
+    setContent((current) => ({
+      ...current!,
+      socialMedia: current!.socialMedia.filter((_, itemIndex) => itemIndex !== index),
+    }));
+  }
+
+  function moveItem(key: "navItems" | "gridItems" | "projects" | "workExperience" | "testimonials" | "socialMedia", index: number, direction: -1 | 1) {
+    if (!content) return;
+    const list = content[key];
+    if (!Array.isArray(list)) return;
+
+    const targetIndex = index + direction;
+    if (targetIndex < 0 || targetIndex >= list.length) return;
+
+    const nextList = [...list];
+    [nextList[index], nextList[targetIndex]] = [nextList[targetIndex], nextList[index]];
+    setContent((current) => ({ ...current!, [key]: nextList }));
   }
 
   if (!loggedIn) {
@@ -336,11 +490,50 @@ export default function AdminPage() {
               </SectionCard>
             )}
 
+            {activeSection === "nav" && (
+              <SectionCard title="Navigation" hint="Add, remove, and update navigation links.">
+                <div className="sectionActions">
+                  <button className="button secondary" onClick={addNavItem} type="button">
+                    Add Link
+                  </button>
+                </div>
+                <div className="list">
+                  {content.navItems.map((item, index) => (
+                    <div className="item formGrid" key={`${item.name}-${index}`}>
+                      <ItemToolbar
+                        canMoveDown={index < content.navItems.length - 1}
+                        canMoveUp={index > 0}
+                        onMoveDown={() => moveItem("navItems", index, 1)}
+                        onMoveUp={() => moveItem("navItems", index, -1)}
+                        onRemove={() => removeNavItem(index)}
+                      />
+                      <div className="formGrid twoCols">
+                        <Field label="Label" value={item.name} onChange={(value) => updateNavItem(index, { name: value })} />
+                        <Field label="Link" value={item.link} onChange={(value) => updateNavItem(index, { link: value })} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </SectionCard>
+            )}
+
             {activeSection === "about" && (
               <SectionCard title="About" hint="Edit the content cards used in the about grid.">
+                <div className="sectionActions">
+                  <button className="button secondary" onClick={addGridItem} type="button">
+                    Add About Card
+                  </button>
+                </div>
                 <div className="list">
                   {content.gridItems.map((item, index) => (
                     <div className="item formGrid" key={item.id}>
+                      <ItemToolbar
+                        canMoveDown={index < content.gridItems.length - 1}
+                        canMoveUp={index > 0}
+                        onMoveDown={() => moveItem("gridItems", index, 1)}
+                        onMoveUp={() => moveItem("gridItems", index, -1)}
+                        onRemove={() => removeGridItem(index)}
+                      />
                       <TextArea label="Title" value={item.title} onChange={(value) => updateGridItem(index, { title: value })} />
                       <Field label="Description" value={item.description} onChange={(value) => updateGridItem(index, { description: value })} />
                       <Field label="Image path" value={item.img} onChange={(value) => updateGridItem(index, { img: value })} />
@@ -352,9 +545,21 @@ export default function AdminPage() {
 
             {activeSection === "projects" && (
               <SectionCard title="Projects" hint="Update project text, links, and screenshots.">
+                <div className="sectionActions">
+                  <button className="button secondary" onClick={addProject} type="button">
+                    Add Project
+                  </button>
+                </div>
                 <div className="list">
                   {content.projects.map((project, index) => (
                     <div className="item formGrid" key={project.id}>
+                      <ItemToolbar
+                        canMoveDown={index < content.projects.length - 1}
+                        canMoveUp={index > 0}
+                        onMoveDown={() => moveItem("projects", index, 1)}
+                        onMoveUp={() => moveItem("projects", index, -1)}
+                        onRemove={() => removeProject(index)}
+                      />
                       <div className="formGrid twoCols">
                         <Field label="Title" value={project.title} onChange={(value) => updateProject(index, { title: value })} />
                         <Field label="Live link" value={project.link} onChange={(value) => updateProject(index, { link: value })} />
@@ -378,9 +583,21 @@ export default function AdminPage() {
 
             {activeSection === "experience" && (
               <SectionCard title="Experience" hint="Update role titles and descriptions.">
+                <div className="sectionActions">
+                  <button className="button secondary" onClick={addExperience} type="button">
+                    Add Experience
+                  </button>
+                </div>
                 <div className="list">
                   {content.workExperience.map((item, index) => (
                     <div className="item formGrid" key={item.id}>
+                      <ItemToolbar
+                        canMoveDown={index < content.workExperience.length - 1}
+                        canMoveUp={index > 0}
+                        onMoveDown={() => moveItem("workExperience", index, 1)}
+                        onMoveUp={() => moveItem("workExperience", index, -1)}
+                        onRemove={() => removeExperience(index)}
+                      />
                       <Field label="Title" value={item.title} onChange={(value) => updateExperience(index, { title: value })} />
                       <TextArea label="Description" value={item.desc} onChange={(value) => updateExperience(index, { desc: value })} />
                       <Field label="Thumbnail path" value={item.thumbnail} onChange={(value) => updateExperience(index, { thumbnail: value })} />
@@ -392,9 +609,21 @@ export default function AdminPage() {
 
             {activeSection === "testimonials" && (
               <SectionCard title="Testimonials" hint="Edit quotes and attribution.">
+                <div className="sectionActions">
+                  <button className="button secondary" onClick={addTestimonial} type="button">
+                    Add Testimonial
+                  </button>
+                </div>
                 <div className="list">
                   {content.testimonials.map((item, index) => (
                     <div className="item formGrid" key={`${item.name}-${index}`}>
+                      <ItemToolbar
+                        canMoveDown={index < content.testimonials.length - 1}
+                        canMoveUp={index > 0}
+                        onMoveDown={() => moveItem("testimonials", index, 1)}
+                        onMoveUp={() => moveItem("testimonials", index, -1)}
+                        onRemove={() => removeTestimonial(index)}
+                      />
                       <TextArea label="Quote" value={item.quote} onChange={(value) => updateTestimonial(index, { quote: value })} />
                       <div className="formGrid twoCols">
                         <Field label="Name" value={item.name} onChange={(value) => updateTestimonial(index, { name: value })} />
@@ -408,11 +637,25 @@ export default function AdminPage() {
 
             {activeSection === "social" && (
               <SectionCard title="Social links" hint="Update social URLs and icon paths.">
+                <div className="sectionActions">
+                  <button className="button secondary" onClick={addSocial} type="button">
+                    Add Social Link
+                  </button>
+                </div>
                 <div className="list">
                   {content.socialMedia.map((item, index) => (
-                    <div className="item formGrid twoCols" key={item.id}>
-                      <Field label="Link" value={item.link} onChange={(value) => updateSocial(index, { link: value })} />
-                      <Field label="Icon path" value={item.img} onChange={(value) => updateSocial(index, { img: value })} />
+                    <div className="item formGrid" key={item.id}>
+                      <ItemToolbar
+                        canMoveDown={index < content.socialMedia.length - 1}
+                        canMoveUp={index > 0}
+                        onMoveDown={() => moveItem("socialMedia", index, 1)}
+                        onMoveUp={() => moveItem("socialMedia", index, -1)}
+                        onRemove={() => removeSocial(index)}
+                      />
+                      <div className="formGrid twoCols">
+                        <Field label="Link" value={item.link} onChange={(value) => updateSocial(index, { link: value })} />
+                        <Field label="Icon path" value={item.img} onChange={(value) => updateSocial(index, { img: value })} />
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -436,6 +679,8 @@ function sectionValue(section: Section, content: PortfolioContent) {
   switch (section) {
     case "hero":
       return content.heroContent;
+    case "nav":
+      return content.navItems;
     case "about":
       return content.gridItems;
     case "projects":
@@ -447,6 +692,40 @@ function sectionValue(section: Section, content: PortfolioContent) {
     case "social":
       return content.socialMedia;
   }
+}
+
+function nextId(items: { id: number }[]) {
+  return items.reduce((max, item) => Math.max(max, item.id), 0) + 1;
+}
+
+function ItemToolbar({
+  canMoveDown,
+  canMoveUp,
+  onMoveDown,
+  onMoveUp,
+  onRemove,
+}: {
+  canMoveDown: boolean;
+  canMoveUp: boolean;
+  onMoveDown: () => void;
+  onMoveUp: () => void;
+  onRemove: () => void;
+}) {
+  return (
+    <div className="itemToolbar">
+      <div className="buttonRow">
+        <button className="button secondary compact" disabled={!canMoveUp} onClick={onMoveUp} type="button">
+          Up
+        </button>
+        <button className="button secondary compact" disabled={!canMoveDown} onClick={onMoveDown} type="button">
+          Down
+        </button>
+      </div>
+      <button className="button danger compact" onClick={onRemove} type="button">
+        Remove
+      </button>
+    </div>
+  );
 }
 
 function AdminSkeleton() {

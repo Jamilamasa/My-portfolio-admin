@@ -205,6 +205,12 @@ a {
   border: 1px solid rgba(253, 164, 175, 0.3);
 }
 
+.button.compact {
+  min-height: 32px;
+  padding: 6px 10px;
+  font-size: 13px;
+}
+
 .button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
@@ -220,6 +226,22 @@ a {
   border-radius: 8px;
   padding: 16px;
   background: rgba(255, 255, 255, 0.02);
+}
+
+.sectionActions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 14px;
+}
+
+.itemToolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 12px;
+  margin-bottom: 2px;
 }
 
 .message {

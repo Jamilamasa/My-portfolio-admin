@@ -9,7 +9,7 @@ export async function login(email: string, password: string) {
     body: JSON.stringify({ email, password }),
   });
 
-  if (!response.ok) throw new Error("Login failed");
+  if (!response.ok) throw new Error(await getErrorMessage(response, "Login failed"));
 
   return (await response.json()) as { token: string };
 }
@@ -24,7 +24,7 @@ export async function registerAdmin(email: string, password: string, apiKey: str
     body: JSON.stringify({ email, password }),
   });
 
-  if (!response.ok) throw new Error("Registration failed");
+  if (!response.ok) throw new Error(await getErrorMessage(response, "Registration failed"));
 }
 
 export async function requestApiKeyOtp(email: string) {
@@ -34,7 +34,7 @@ export async function requestApiKeyOtp(email: string) {
     body: JSON.stringify({ email }),
   });
 
-  if (!response.ok) throw new Error("OTP request failed");
+  if (!response.ok) throw new Error(await getErrorMessage(response, "OTP request failed"));
 }
 
 export async function regenerateApiKey(email: string, otp: string) {
@@ -44,14 +44,14 @@ export async function regenerateApiKey(email: string, otp: string) {
     body: JSON.stringify({ email, otp }),
   });
 
-  if (!response.ok) throw new Error("API key regeneration failed");
+  if (!response.ok) throw new Error(await getErrorMessage(response, "API key regeneration failed"));
 
   return (await response.json()) as { apiKey: string };
 }
 
 export async function getPortfolio() {
   const response = await fetch(`${apiBaseUrl}/api/portfolio`, { cache: "no-store" });
-  if (!response.ok) throw new Error("Unable to load portfolio");
+  if (!response.ok) throw new Error(await getErrorMessage(response, "Unable to load portfolio"));
   return (await response.json()) as Partial<PortfolioContent>;
 }
 
@@ -65,7 +65,7 @@ export async function saveSection(section: string, value: unknown, token: string
     body: JSON.stringify(value),
   });
 
-  if (!response.ok) throw new Error("Save failed");
+  if (!response.ok) throw new Error(await getErrorMessage(response, "Save failed"));
 }
 
 export async function uploadMedia(file: File, token: string) {
@@ -78,7 +78,21 @@ export async function uploadMedia(file: File, token: string) {
     body: formData,
   });
 
-  if (!response.ok) throw new Error("Upload failed");
+  if (!response.ok) throw new Error(await getErrorMessage(response, "Upload failed"));
 
   return (await response.json()) as { url: string; key: string };
+}
+
+async function getErrorMessage(response: Response, fallback: string) {
+  const contentType = response.headers.get("content-type") ?? "";
+
+  if (contentType.includes("application/json")) {
+    const body = await response.json().catch(() => null);
+    if (body?.detail) return body.detail;
+    if (body?.error) return body.error;
+    if (body?.title) return body.title;
+  }
+
+  const text = await response.text().catch(() => "");
+  return text || `${fallback} (${response.status})`;
 }
